@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechEval MNC - Profile & Portfolio Evaluator</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+
+  <!-- TOP HEADER & NAVBAR -->
+  <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('ecosystem')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <i class="fa-solid fa-bolt text-white text-lg"></i>
+        </div>
+        <div>
+          <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">TechEval<span class="text-indigo-400">.MNC</span></span>
+          <span class="hidden sm:inline-block text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 ml-2">Tier-1 Hiring Standard</span>
+        </div>
+      </div>
+
+      <!-- Desktop Nav Tabs -->
+      <nav class="hidden md:flex items-center space-x-1 bg-slate-800/60 p-1.5 rounded-xl border border-slate-700/60">
+        <button onclick="switchTab('ecosystem')" id="nav-ecosystem" class="nav-btn px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all flex items-center gap-2 text-indigo-300 bg-indigo-600/20 border border-indigo-500/30">
+          <i class="fa-solid fa-layer-group"></i> Ecosystem Audit
+        </button>
+        <button onclick="switchTab('github')" id="nav-github" class="nav-btn px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+          <i class="fa-brands fa-github"></i> GitHub Live Sync
+        </button>
+        <button onclick="switchTab('resume')" id="nav-resume" class="nav-btn px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-file-contract"></i> Resume & Project Verifier
+        </button>
+        <button onclick="switchTab('benchmarks')" id="nav-benchmarks" class="nav-btn px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-chart-line"></i> MNC Benchmarks
+        </button>
+      </nav>
+
+      <!-- Key Status Button & Mobile Menu Toggle -->
+      <div class="flex items-center gap-3">
+        <button onclick="openApiKeyModal()" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-700 bg-slate-800/80 hover:border-indigo-500/50 hover:bg-slate-800 transition flex items-center gap-2 text-slate-300">
+          <i class="fa-solid fa-key text-indigo-400"></i>
+          <span id="apiKeyBtnText">Gemini API Key</span>
+        </button>
+        
+        <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-400 hover:text-white focus:outline-none">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-slate-800 bg-slate-900/95 px-4 pt-2 pb-4 space-y-1">
+      <button onclick="switchTab('ecosystem')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium flex items-center gap-3 text-indigo-300 bg-indigo-950/40">
+        <i class="fa-solid fa-layer-group text-indigo-400"></i> Ecosystem Audit
+      </button>
+      <button onclick="switchTab('github')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium flex items-center gap-3 text-slate-300 hover:bg-slate-800">
+        <i class="fa-brands fa-github text-indigo-400"></i> GitHub Live Sync
+      </button>
+      <button onclick="switchTab('resume')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium flex items-center gap-3 text-slate-300 hover:bg-slate-800">
+        <i class="fa-solid fa-file-contract text-indigo-400"></i> Resume & Project Verifier
+      </button>
+      <button onclick="switchTab('benchmarks')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium flex items-center gap-3 text-slate-300 hover:bg-slate-800">
+        <i class="fa-solid fa-chart-line text-indigo-400"></i> MNC Benchmarks
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- VIEW 1: FULL ECOSYSTEM AUDIT -->
+    <section id="view-ecosystem" class="view-tab active">
+      <div class="mb-8 text-center max-w-2xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
+          MNC Digital Presence <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Auditor</span>
+        </h1>
+        <p class="text-slate-400 text-sm sm:text-base">
+          Get honest, recruiter-grade feedback on how your portfolio, GitHub, and LinkedIn appear to hiring teams at Microsoft, Amazon, Infosys, and global tech MNCs.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left: Form -->
+        <div class="lg:col-span-5 bg-slate-900/60 rounded-2xl p-6 border border-slate-800 backdrop-blur-xl shadow-xl">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-semibold text-white flex items-center gap-2">
+              <i class="fa-solid fa-compass-drafting text-indigo-400"></i> Candidate Footprint
+            </h2>
+            <button onclick="prefillEcosystemDemo()" class="text-xs text-indigo-400 hover:text-indigo-300 underline font-medium">
+              Pre-fill Demo Data
+            </button>
+          </div>
+
+          <form id="ecosystemForm" onsubmit="runEcosystemAudit(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Portfolio Website URL</label>
+              <div class="relative">
+                <i class="fa-solid fa-globe absolute left-3 top-3 text-slate-500 text-sm"></i>
+                <input type="url" id="ecoPortfolioUrl" required placeholder="https://yourportfolio.dev" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 pl-9 pr-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-200 placeholder-slate-600">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">GitHub Profile URL</label>
+              <div class="relative">
+                <i class="fa-brands fa-github absolute left-3 top-3 text-slate-500 text-sm"></i>
+                <input type="url" id="ecoGithubUrl" required placeholder="https://github.com/username" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 pl-9 pr-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-200 placeholder-slate-600">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">LinkedIn Profile URL</label>
+              <div class="relative">
+                <i class="fa-brands fa-linkedin absolute left-3 top-3 text-slate-500 text-sm"></i>
+                <input type="url" id="ecoLinkedinUrl" placeholder="https://linkedin.com/in/username" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 pl-9 pr-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-200 placeholder-slate-600">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Target Tier</label>
+                <select id="ecoTargetTier" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 px-3 text-sm focus:border-indigo-500 focus:outline-none text-slate-200">
+                  <option value="Tier-1 Product (FAANG, Microsoft, Uber)">Tier-1 Product (FAANG)</option>
+                  <option value="Global IT MNC (Infosys, TCS, Cognizant, Wipro)">Global IT MNC (TCS/Infosys)</option>
+                  <option value="High-Growth Fintech & Unicorns">High-Growth Fintech/Unicorn</option>
+                  <option value="European / US Remote Roles">Global Remote Roles</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Target Role</label>
+                <input type="text" id="ecoTargetRole" placeholder="e.g., SDE-1 / Full-Stack" value="Full-Stack Developer (SDE-1)" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 px-3 text-sm focus:border-indigo-500 focus:outline-none text-slate-200">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Highlighted Projects & Stack</label>
+              <textarea id="ecoContext" rows="3" placeholder="Briefly mention your top 2 projects, primary tech stack (e.g., Next.js, Node, PostgreSQL, AWS, Docker), and years of experience." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-200 placeholder-slate-600"></textarea>
+            </div>
+
+            <button type="submit" id="ecoSubmitBtn" class="w-full py-3 px-4 rounded-xl font-semibold text-sm bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white shadow-lg shadow-indigo-600/30 transition transform active:scale-98 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Run MNC Readiness Evaluation
+            </button>
+          </form>
+        </div>
+
+        <!-- Right: Results & Mentor Chat -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- Empty Placeholder -->
+          <div id="ecoEmptyState" class="bg-slate-900/40 rounded-2xl p-12 border border-dashed border-slate-800 text-center">
+            <div class="w-16 h-16 rounded-2xl bg-slate-800/80 mx-auto flex items-center justify-center mb-4 text-slate-500 text-2xl">
+              <i class="fa-solid fa-radar"></i>
+            </div>
+            <h3 class="text-base font-semibold text-slate-300 mb-1">Awaiting Portfolio Submission</h3>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto">Fill in the links on the left or click "Pre-fill Demo Data" to run a comprehensive recruiter scan.</p>
+          </div>
+
+          <!-- Loading State -->
+          <div id="ecoLoadingState" class="hidden bg-slate-900/60 rounded-2xl p-10 border border-slate-800 text-center">
+            <div class="inline-block relative w-16 h-16 mb-4">
+              <div class="w-16 h-16 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin"></div>
+              <i class="fa-solid fa-robot absolute inset-0 m-auto w-6 h-6 flex items-center justify-center text-indigo-400"></i>
+            </div>
+            <h4 class="text-base font-bold text-white mb-2">Analyzing Profiles with AI...</h4>
+            <p id="ecoScanStatus" class="text-xs text-indigo-400 font-mono">Cross-referencing GitHub activity with portfolio claims...</p>
+          </div>
+
+          <!-- Report Container -->
+          <div id="ecoReportCard" class="hidden space-y-6">
+            <!-- Score Overview -->
+            <div class="bg-slate-900/80 rounded-2xl p-6 border border-slate-800 backdrop-blur-xl">
+              <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-800">
+                <div>
+                  <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">MNC Hiring Verdict</span>
+                  <h3 id="reportVerdict" class="text-xl font-bold text-white mt-1">Ready for Review</h3>
+                  <p id="reportSummary" class="text-xs text-slate-400 mt-1 max-w-lg"></p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="text-right">
+                    <span class="text-xs text-slate-400 block">Readiness Score</span>
+                    <span id="reportScore" class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-indigo-400">--</span>
+                    <span class="text-slate-500 text-xs">/ 100</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Metric Badges -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-center">
+                <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+                  <span class="text-[10px] text-slate-400 uppercase font-semibold block">Recruiter UX (10s)</span>
+                  <span id="scoreUx" class="text-lg font-bold text-indigo-300">--/25</span>
+                </div>
+                <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+                  <span class="text-[10px] text-slate-400 uppercase font-semibold block">Project Depth</span>
+                  <span id="scoreDepth" class="text-lg font-bold text-indigo-300">--/25</span>
+                </div>
+                <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+                  <span class="text-[10px] text-slate-400 uppercase font-semibold block">MNC Tech Alignment</span>
+                  <span id="scoreTech" class="text-lg font-bold text-indigo-300">--/25</span>
+                </div>
+                <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+                  <span class="text-[10px] text-slate-400 uppercase font-semibold block">Metrics & STAR Proof</span>
+                  <span id="scoreProof" class="text-lg font-bold text-indigo-300">--/25</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Red Flags & Strengths -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-rose-950/20 border border-rose-900/40 p-5 rounded-2xl">
+                <h4 class="text-sm font-bold text-rose-300 flex items-center gap-2 mb-3">
+                  <i class="fa-solid fa-triangle-exclamation"></i> Brutal Red Flags / Dealbreakers
+                </h4>
+                <ul id="reportRedFlags" class="text-xs text-rose-200/90 space-y-2 list-disc list-inside"></ul>
+              </div>
+
+              <div class="bg-emerald-950/20 border border-emerald-900/40 p-5 rounded-2xl">
+                <h4 class="text-sm font-bold text-emerald-300 flex items-center gap-2 mb-3">
+                  <i class="fa-solid fa-circle-check"></i> Competitive Standouts
+                </h4>
+                <ul id="reportStandouts" class="text-xs text-emerald-200/90 space-y-2 list-disc list-inside"></ul>
+              </div>
+            </div>
+
+            <!-- 30-Day MNC Upgrade Plan -->
+            <div class="bg-slate-900/80 rounded-2xl p-5 border border-slate-800">
+              <h4 class="text-sm font-bold text-indigo-300 flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-road"></i> 30-Day Step-by-Step Fixes for MNC Shortlisting
+              </h4>
+              <div id="reportRoadmap" class="space-y-3 text-xs text-slate-300"></div>
+            </div>
+
+            <!-- Interactive AI Career Mentor Follow-Up -->
+            <div class="bg-slate-900/90 rounded-2xl p-5 border border-indigo-500/30">
+              <div class="flex items-center justify-between mb-3">
+                <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                  <i class="fa-solid fa-comments text-indigo-400"></i> Ask the MNC Recruiter AI Follow-up Questions
+                </h4>
+                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">Live Mentor</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-4">Need specific rewrites for bullet points, architecture advice, or ways to justify your projects? Ask below.</p>
+              
+              <div id="mentorChatHistory" class="bg-slate-950/80 rounded-xl p-3 max-h-48 overflow-y-auto space-y-3 text-xs border border-slate-800 mb-3">
+                <div class="p-2.5 rounded-lg bg-indigo-950/30 border border-indigo-900/40 text-slate-300">
+                  <span class="font-bold text-indigo-300 block mb-1">MNC Hiring Mentor:</span>
+                  I've reviewed your footprint. You can ask me how to replace generic tutorial projects, reframe metrics, or prepare for technical screenings.
+                </div>
+              </div>
+
+              <div class="flex gap-2">
+                <input type="text" id="mentorQuestionInput" placeholder="e.g. How can I turn my e-commerce project into a distributed system?" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs focus:border-indigo-500 focus:outline-none text-slate-200">
+                <button onclick="askMentorFollowup()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
+                  <span>Send</span> <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 2: LIVE GITHUB ECOSYSTEM AUDIT -->
+    <section id="view-github" class="view-tab hidden">
+      <div class="mb-8 text-center max-w-2xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
+          GitHub <span class="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">Live Ecosystem Sync</span>
+        </h1>
+        <p class="text-slate-400 text-sm">
+          Connect your GitHub handle. We pull real-time commit data, top repos, and languages directly via GitHub's REST API and audit against MNC code quality standards.
+        </p>
+      </div>
+
+      <div class="max-w-3xl mx-auto space-y-6">
+        
+        <!-- Search bar -->
+        <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <i class="fa-brands fa-github absolute left-3.5 top-3.5 text-slate-500"></i>
+            <input type="text" id="githubUsernameInput" placeholder="Enter GitHub username (e.g. torvalds or your username)" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 pl-10 pr-3 text-sm focus:border-emerald-500 focus:outline-none text-slate-200">
+          </div>
+          <button onclick="fetchGitHubLiveData()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
+            <i class="fa-solid fa-cloud-arrow-down"></i> Sync & Audit
+          </button>
+          <button onclick="prefillGithubDemo()" class="text-xs text-slate-400 hover:text-white px-3 py-2 border border-slate-800 rounded-xl hover:bg-slate-800">
+            Demo User
+          </button>
+        </div>
+
+        <!-- GitHub Live Info Card -->
+        <div id="githubDataContainer" class="hidden space-y-6">
+          <div class="bg-slate-900/80 rounded-2xl p-6 border border-slate-800 flex flex-col sm:flex-row items-center gap-6">
+            <img id="ghAvatar" src="" alt="Avatar" class="w-20 h-20 rounded-2xl border-2 border-emerald-500/40">
+            <div class="flex-1 text-center sm:text-left">
+              <h3 id="ghName" class="text-lg font-bold text-white"></h3>
+              <p id="ghBio" class="text-xs text-slate-400 mt-1 max-w-md"></p>
+              <div class="flex flex-wrap justify-center sm:justify-start gap-4 mt-3 text-xs text-slate-300 font-mono">
+                <span><i class="fa-solid fa-code-branch text-emerald-400"></i> <strong id="ghReposCount">0</strong> Public Repos</span>
+                <span><i class="fa-regular fa-star text-amber-400"></i> <strong id="ghStarsCount">0</strong> Stars</span>
+                <span><i class="fa-solid fa-users text-cyan-400"></i> <strong id="ghFollowersCount">0</strong> Followers</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Repos Found -->
+          <div class="bg-slate-900/80 rounded-2xl p-6 border border-slate-800">
+            <h4 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-code-fork text-emerald-400"></i> Prominent Repositories Evaluated
+            </h4>
+            <div id="ghRepoList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </div>
+
+          <!-- AI Codebase Audit Results -->
+          <div id="ghAiAuditCard" class="bg-slate-900/90 rounded-2xl p-6 border border-emerald-500/30">
+            <h4 class="text-sm font-bold text-emerald-300 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved"></i> MNC Codebase Depth Audit
+            </h4>
+            <div id="ghAiAuditContent" class="text-xs text-slate-300 space-y-3">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 3: RESUME & PROJECT VERIFIER -->
+    <section id="view-resume" class="view-tab hidden">
+      <div class="mb-8 text-center max-w-2xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
+          Resume & Bullet <span class="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 bg-clip-text text-transparent">Fluff Detector</span>
+        </h1>
+        <p class="text-slate-400 text-sm">
+          Paste your resume bullet points, project descriptions, or "About Me" text. We cross-verify them for passive phrasing, buzzword fluff, and convert them to quantified STAR metrics.
+        </p>
+      </div>
+
+      <div class="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Input Column -->
+        <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
+          <div class="flex items-center justify-between mb-3">
+            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Paste Resume Project Bullets</label>
+            <button onclick="prefillResumeDemo()" class="text-xs text-amber-400 hover:underline">Sample Bullets</button>
+          </div>
+          <textarea id="resumeInputText" rows="10" placeholder="e.g.&#10;• Created a responsive website using HTML, CSS, JavaScript and React.&#10;• Worked on an e-commerce platform with login and cart functionality.&#10;• Responsible for backend database and bugs." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs focus:border-amber-500 focus:outline-none font-mono text-slate-200 placeholder-slate-600 mb-4"></textarea>
+
+          <button onclick="analyzeResumeFluff()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-semibold py-3 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+            <i class="fa-solid fa-magnifying-glass-chart"></i> Run Fluff Audit & STAR Rewrite
+          </button>
+        </div>
+
+        <!-- Output Column -->
+        <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
+          <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-highlighter text-amber-400"></i> AI Recruiter Analysis & Rewrites
+          </h3>
+
+          <div id="resumeAnalysisOutput" class="text-xs text-slate-400 space-y-4">
+            <p class="italic text-slate-500 text-center py-12">Submit your bullet points on the left to review passive phrasing warnings and receive rewritten STAR-format enterprise metrics.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 4: MNC BENCHMARKS & STANDARDS -->
+    <section id="view-benchmarks" class="view-tab hidden">
+      <div class="mb-8 text-center max-w-2xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
+          MNC Hiring <span class="bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Benchmarks</span>
+        </h1>
+        <p class="text-slate-400 text-sm">
+          Understand why 90% of developer portfolios get rejected in the first 15 seconds, and what separates an applicant from an engineering hire.
+        </p>
+      </div>
+
+      <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Comparison Table -->
+        <div class="bg-slate-900/80 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+          <div class="p-5 border-b border-slate-800 bg-slate-950/50">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-scale-balanced text-indigo-400"></i> The Difference: Filtered Out vs. MNC Shortlist
+            </h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                <tr>
+                  <th class="py-3 px-4">Evaluation Criteria</th>
+                  <th class="py-3 px-4 text-rose-400">Average Rejection Profile (90%)</th>
+                  <th class="py-3 px-4 text-emerald-400">Standout MNC Profile (Top 5%)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <tr>
+                  <td class="py-3.5 px-4 font-semibold text-white">Project Scope</td>
+                  <td class="py-3.5 px-4 text-slate-400">Todo App, Weather App, Clone of Netflix UI with hardcoded data.</td>
+                  <td class="py-3.5 px-4 text-emerald-300/90 font-medium">Distributed microservice, background queue with Redis, real auth, CI/CD pipeline, live test coverage.</td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 px-4 font-semibold text-white">Metrics / Proof</td>
+                  <td class="py-3.5 px-4 text-slate-400">"Built with React and Tailwind. Fast and responsive UI."</td>
+                  <td class="py-3.5 px-4 text-emerald-300/90 font-medium">"Reduced API latency by 42% via Redis caching; handled 10,000 synthetic requests with k6."</td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 px-4 font-semibold text-white">GitHub Hygiene</td>
+                  <td class="py-3.5 px-4 text-slate-400">Single commit: "Initial commit", no README, empty descriptions.</td>
+                  <td class="py-3.5 px-4 text-emerald-300/90 font-medium">Conventional commits, detailed README with architecture diagrams, Docker compose for 1-step reproduction.</td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 px-4 font-semibold text-white">Recruiter 15-Sec Test</td>
+                  <td class="py-3.5 px-4 text-slate-400">Slow animated 3D canvas, broken demo link, unclear role identity.</td>
+                  <td class="py-3.5 px-4 text-emerald-300/90 font-medium">Clear headline, instant working live demo, 1-click resume download, direct GitHub link per project.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 15-Second Recruiter Checklist -->
+        <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
+          <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-indigo-400"></i> The 15-Second Recruiter Scan Checklist
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-300">
+            <label class="flex items-center gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+              <input type="checkbox" checked class="accent-indigo-500 rounded"> Live demo links work on mobile without errors
+            </label>
+            <label class="flex items-center gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+              <input type="checkbox" checked class="accent-indigo-500 rounded"> Clear role title at top (e.g. SDE Backend / React Full-Stack)
+            </label>
+            <label class="flex items-center gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+              <input type="checkbox" checked class="accent-indigo-500 rounded"> Architecture diagram or DB schema included in repo
+            </label>
+            <label class="flex items-center gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+              <input type="checkbox" checked class="accent-indigo-500 rounded"> No raw tutorial projects in top 3 featured spots
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- API BACKEND MODAL -->
+  <div id="apiKeyModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-indigo-400"></i> Secure AI Backend Required
+        </h3>
+        <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="text-xs text-slate-400 leading-relaxed">
+        The app now sends requests through a backend proxy so your Gemini API key is never exposed in the browser. Set <code class="text-indigo-300">GEMINI_API_KEY</code> on the server and restart the app.
+      </p>
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] text-slate-300">
+        <div class="font-semibold text-indigo-300 mb-1">Example:</div>
+        <code class="break-all">GEMINI_API_KEY=AIzaSy...<br>npm start</code>
+      </div>
+      <div class="flex items-center justify-between pt-2">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-xs text-indigo-400 hover:underline">
+          Get free key from Google AI Studio &rarr;
+        </a>
+        <button onclick="closeApiKeyModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2 rounded-xl text-xs transition">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load script -->
+  <script src="app.js"></script>
+</body>
+</html>
