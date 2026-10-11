@@ -4,7 +4,7 @@
 
 Try the public deployment: **[https://techeval-mnc.onrender.com](https://techeval-mnc.onrender.com)**
 
-The app is hosted on Render. Its free instance may take 50 seconds or more to respond after inactiv
+The app is hosted on Render. Its free instance may take 50 seconds or more to respond after periods of inactivity.
 
 TechEval.MNC evaluates developer portfolios, GitHub profiles, and resume bullets against hiring expectations using Google Gemini AI and the GitHub REST API.
 
@@ -33,7 +33,7 @@ This repository includes a Render Blueprint at `render.yaml`.
 3. When prompted, add `GEMINI_API_KEY` as a secret environment variable. Do not put the key in the repository.
 4. Deploy. Render installs dependencies, starts the Node server, and checks `/healthz`.
 
-The generated `onrender.com` URL can be shared publicly. Gemini usage is charged against the key owner's quota, so review the provider's quotas and billing settings before sharing the app widely.
+The public app is available at [https://techeval-mnc.onrender.com](https://techeval-mnc.onrender.com). Gemini usage is charged against the deployment owner’s quota, so review provider quotas and billing settings before sharing widely.
 
 ## Tech stack
 
@@ -41,3 +41,7 @@ The generated `onrender.com` URL can be shared publicly. Gemini usage is charged
 - Backend: Node.js and Express
 - AI: Google Gemini API
 - Public profile data: GitHub REST API
+
+## Public deployment and API usage
+
+The Gemini key is held by the server and is never included in the browser bundle or repository. The public AI endpoint is rate-limited to 20 requests per IP per 15 minutes. Requests consume the deployment owner’s Gemini quota; use provider quota and billing controls appropriately.
