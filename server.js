@@ -57,7 +57,13 @@ app.post('/api/gemini', geminiLimiter, async (req, res) => {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
+      const retryAfter = response.headers.get('retry-after');
+      if (retryAfter && /^\d+$/.test(retryAfter)) {
+        res.set('Retry-After', retryAfter);
+      }
+
       return res.status(response.status).json({
+        code: response.status === 429 ? 'GEMINI_QUOTA_EXCEEDED' : 'GEMINI_UPSTREAM_ERROR',
         error: data.error?.message || 'Gemini API request failed.'
       });
     }

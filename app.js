@@ -57,26 +57,69 @@ function updateApiKeyDisplay() {
   btnText.classList.add('text-emerald-400');
 }
 
-async function callGemini(promptText, isJson = false) {
-  const response = await fetch('/api/gemini', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt: promptText, isJson })
-  });
+function showAppNotice(message) {
+  const notice = document.getElementById('appNotice');
+  if (!notice) return;
 
-  const data = await response.json().catch(() => ({}));
+  notice.innerText = message;
+  notice.classList.remove('hidden');
+}
 
-  if (!response.ok) {
-    if (response.status === 429) {
-      throw new Error('Gemini quota exceeded. Please wait a few moments or try again later.');
-    }
-    if (response.status === 400 || response.status === 403 || response.status === 500) {
-      throw new Error(data.error || 'The AI backend is unavailable. Check the server configuration.');
-    }
-    throw new Error(data.error || `API error (${response.status})`);
+function clearAppNotice() {
+  const notice = document.getElementById('appNotice');
+  if (!notice) return;
+
+  notice.innerText = '';
+  notice.classList.add('hidden');
+}
+
+function getAiErrorMessage(error, data) {
+  if (data.code === 'GEMINI_QUOTA_EXCEEDED') {
+    return 'Gemini has temporarily exhausted the configured API key’s quota. Please try again after the quota resets, or ask the key owner to review limits and billing in Google AI Studio. Repeated retries will not restore exhausted quota.';
   }
 
-  return data.text;
+  if (error.status === 429) {
+    return data.error || 'This app is receiving too many requests. Please wait a little before trying again.';
+  }
+
+  if (error.status === 503 || error.status === 502 || error.status === 504) {
+    return 'Gemini is temporarily busy. Please try again in a moment.';
+  }
+
+  return data.error || `AI request failed (${error.status}). Please try again.`;
+}
+
+async function callGemini(promptText, isJson = false) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const response = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: promptText, isJson })
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (response.ok) {
+      clearAppNotice();
+      return data.text;
+    }
+
+    const isTemporaryUpstreamError =
+      data.code === 'GEMINI_UPSTREAM_ERROR' &&
+      [502, 503, 504].includes(response.status);
+    if (isTemporaryUpstreamError && attempt < 2) {
+      const retryAfter = Number(response.headers.get('Retry-After'));
+      const delayMs = Number.isFinite(retryAfter) && retryAfter > 0
+        ? Math.min(retryAfter * 1000, 5000)
+        : 1000 * (2 ** attempt);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+      continue;
+    }
+
+    const error = new Error(getAiErrorMessage(response, data));
+    error.status = response.status;
+    throw error;
+  }
 }
 
 function escapeHtml(value) {
@@ -214,7 +257,7 @@ Conduct a brutal, realistic MNC audit. Provide your output strictly as a JSON ob
   } catch (err) {
     loadingState.classList.add('hidden');
     emptyState.classList.remove('hidden');
-    alert(err.message || 'Error conducting audit');
+    showAppNotice(err.message || 'Error conducting audit.');
   } finally {
     if (submitBtn) submitBtn.disabled = false;
   }
@@ -255,7 +298,7 @@ Give actionable, concrete, senior-level advice in 2-3 concise paragraphs. Format
     `;
     chatContainer.scrollTop = chatContainer.scrollHeight;
   } catch (err) {
-    alert(err.message);
+    showAppNotice(err.message);
   }
 }
 
@@ -269,7 +312,7 @@ function prefillGithubDemo() {
 async function fetchGitHubLiveData() {
   const username = document.getElementById('githubUsernameInput').value.trim();
   if (!username) {
-    alert('Please enter a GitHub username');
+    showAppNotice('Please enter a GitHub username.');
     return;
   }
 
@@ -350,7 +393,7 @@ Format with clean bullet points.
     auditContent.innerHTML = formatMarkdown(aiAnalysis);
 
   } catch (err) {
-    alert(err.message || 'Error fetching GitHub data');
+    showAppNotice(err.message || 'Error fetching GitHub data.');
   }
 }
 
@@ -368,7 +411,7 @@ function prefillResumeDemo() {
 async function analyzeResumeFluff() {
   const text = document.getElementById('resumeInputText').value.trim();
   if (!text) {
-    alert('Please enter your resume bullets or project descriptions');
+    showAppNotice('Please enter your resume bullets or project descriptions.');
     return;
   }
 
@@ -392,6 +435,7 @@ Provide:
     const analysis = await callGemini(prompt, false);
     outputDiv.innerHTML = formatMarkdown(analysis);
   } catch (err) {
+    showAppNotice(err.message);
     outputDiv.innerHTML = `<p class="text-rose-400">${escapeHtml(err.message)}</p>`;
   }
 }
