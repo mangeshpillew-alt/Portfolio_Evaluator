@@ -11,6 +11,7 @@ The service runs on Render's free instance and can take 50 seconds or more to re
 ## Features
 
 - Full ecosystem audit with readiness score, red flags, standouts, and a 30-day plan.
+- Ecosystem audits retrieve public portfolio-page text and GitHub profile/repository data; LinkedIn retrieval is best-effort because LinkedIn may require sign-in or block automated access.
 - GitHub profile and repository sync.
 - Resume bullet feedback and STAR-style rewrites.
 - AI career mentor follow-up chat.
@@ -29,6 +30,8 @@ Never commit `.env` or share the server API key. Server-powered evaluations and 
 Visitors can use the app without enabling mentor chat. To chat with the AI mentor, a visitor may enter their own Gemini API key using **Mentor Key (Optional)**. That key is stored in the current browser session and sent directly from the browser to Google; it is not sent to this app's server. Visitors can remove it from the same menu, and it is removed when the browser session ends. Do not enter a key unless you own or are authorized to use it; keys are visible to the browser user and should be restricted/revoked through Google AI Studio as needed.
 
 The visitor-owned key is only for mentor chat. It does not replace the deployment owner's key for evaluations or other server-powered AI reports. If the owner's quota is exhausted, those server-powered reports must wait for that quota to reset or for the owner to resolve the quota issue.
+
+The ecosystem audit only requests public HTTPS pages, follows a maximum of three redirects, rejects URLs resolving to non-public IP addresses, and limits each retrieved page to 500 KB and 8 seconds. If a source blocks automated access or is not public, the audit reports that source as unavailable and continues with the remaining public data and the candidate's supplied details.
 
 ## Deploy on Render
 

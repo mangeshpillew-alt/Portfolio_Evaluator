@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { rateLimit } = require('express-rate-limit');
+const { collectFootprint } = require('./profile-audit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,8 +20,36 @@ const geminiLimiter = rateLimit({
   message: { error: 'Too many AI requests. Please try again in 15 minutes.' }
 });
 
+const footprintLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { error: 'Too many profile fetches. Please try again in 15 minutes.' }
+});
+
 app.get('/healthz', (req, res) => {
   res.sendStatus(200);
+});
+
+app.post('/api/footprint', footprintLimiter, async (req, res) => {
+  const { portfolioUrl, githubUrl, linkedinUrl = '' } = req.body || {};
+  if (typeof portfolioUrl !== 'string' || !portfolioUrl || typeof githubUrl !== 'string' || !githubUrl) {
+    return res.status(400).json({ error: 'Portfolio and GitHub profile URLs are required.' });
+  }
+  if (typeof linkedinUrl !== 'string') {
+    return res.status(400).json({ error: 'LinkedIn profile URL must be a string.' });
+  }
+  if ([portfolioUrl, githubUrl, linkedinUrl].some(value => value.length > 2048)) {
+    return res.status(400).json({ error: 'Profile URLs must be 2,048 characters or fewer.' });
+  }
+
+  try {
+    const footprint = await collectFootprint({ portfolioUrl, githubUrl, linkedinUrl });
+    return res.json(footprint);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to collect public profile data.' });
+  }
 });
 
 app.post('/api/gemini', geminiLimiter, async (req, res) => {
