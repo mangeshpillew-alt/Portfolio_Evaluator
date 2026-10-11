@@ -1,5 +1,11 @@
 # TechEval.MNC — AI Developer Profile & Portfolio Evaluator
 
+## Live app
+
+Try the public deployment: **[https://techeval-mnc.onrender.com](https://techeval-mnc.onrender.com)**
+
+The app is hosted on Render. Its free instance may take 50 seconds or more to respond after inactiv
+
 TechEval.MNC evaluates developer portfolios, GitHub profiles, and resume bullets against hiring expectations using Google Gemini AI and the GitHub REST API.
 
 ## Features
