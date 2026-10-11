@@ -22,7 +22,13 @@ The service runs on Render's free instance and can take 50 seconds or more to re
 3. Copy `.env.example` to `.env` and set `GEMINI_API_KEY` to a key from [Google AI Studio](https://aistudio.google.com/app/apikey).
 4. Run `npm start`, then open `http://localhost:3000`.
 
-Never commit `.env` or share your API key. The backend endpoint is limited to 20 AI requests per IP per 15 minutes.
+Never commit `.env` or share the server API key. Server-powered evaluations and AI reports use the app owner's Gemini key and are limited to 20 requests per IP per 15 minutes.
+
+### Optional visitor-owned mentor chat key
+
+Visitors can use the app without enabling mentor chat. To chat with the AI mentor, a visitor may enter their own Gemini API key using **Mentor Key (Optional)**. That key is stored in the current browser session and sent directly from the browser to Google; it is not sent to this app's server. Visitors can remove it from the same menu, and it is removed when the browser session ends. Do not enter a key unless you own or are authorized to use it; keys are visible to the browser user and should be restricted/revoked through Google AI Studio as needed.
+
+The visitor-owned key is only for mentor chat. It does not replace the deployment owner's key for evaluations or other server-powered AI reports. If the owner's quota is exhausted, those server-powered reports must wait for that quota to reset or for the owner to resolve the quota issue.
 
 ## Deploy on Render
 
@@ -44,6 +50,6 @@ The generated `onrender.com` URL can be shared publicly. Gemini usage is charged
 
 ## Public deployment and API usage
 
-The Gemini key is held by the server and is never included in the browser bundle or repository. The public AI endpoint is rate-limited to 20 requests per IP per 15 minutes. Because this is a public app, requests consume the deployment owner's Gemini quota; use provider quota and billing controls appropriately.
+The server Gemini key is never included in the browser bundle or repository. Public server-powered AI features use the deployment owner's Gemini quota and are rate-limited to 20 requests per IP per 15 minutes. Visitor-owned keys, when supplied for optional mentor chat, are sent directly to Google and use that visitor's quota.
 
 Temporary Gemini availability errors (502/503/504) are retried automatically, and errors are shown in the app rather than in repeated browser popups. A genuinely exhausted Gemini quota cannot be fixed by retries; wait for the quota reset or adjust the key's limits/billing in Google AI Studio.

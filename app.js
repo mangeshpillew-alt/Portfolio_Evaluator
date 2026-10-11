@@ -5,9 +5,15 @@ const MODEL_NAME = "gemini-3.8-flash";
 
 let currentTab = 'ecosystem';
 let latestAuditContext = null;
+let pendingMentorQuestion = false;
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', () => {
+  const previousKey = localStorage.getItem('gemini_api_key');
+  if (previousKey && !sessionStorage.getItem('gemini_chat_api_key')) {
+    sessionStorage.setItem('gemini_chat_api_key', previousKey);
+  }
+  localStorage.removeItem('gemini_api_key');
   updateApiKeyDisplay();
 });
 
@@ -40,21 +46,101 @@ function toggleMobileMenu() {
 // API CONFIG / BACKEND PROXY
 // ========================================================
 function openApiKeyModal() {
+  const input = document.getElementById('apiKeyInput');
+  if (input) input.value = getMentorApiKey();
   const modal = document.getElementById('apiKeyModal');
   if (modal) modal.classList.remove('hidden');
 }
 
 function closeApiKeyModal() {
+  pendingMentorQuestion = false;
   const modal = document.getElementById('apiKeyModal');
   if (modal) modal.classList.add('hidden');
+}
+
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) {
+    showAppNotice('Enter your Gemini API key to enable mentor chat, or choose “Continue without chat.”');
+    return;
+  }
+
+  sessionStorage.setItem('gemini_chat_api_key', key);
+  const resumePendingQuestion = pendingMentorQuestion;
+  pendingMentorQuestion = false;
+  updateApiKeyDisplay();
+  closeApiKeyModal();
+  clearAppNotice();
+  if (resumePendingQuestion) void askMentorFollowup();
+}
+
+function skipMentorChat() {
+  pendingMentorQuestion = false;
+  closeApiKeyModal();
+  clearAppNotice();
+}
+
+function removeApiKey() {
+  sessionStorage.removeItem('gemini_chat_api_key');
+  pendingMentorQuestion = false;
+  const input = document.getElementById('apiKeyInput');
+  if (input) input.value = '';
+  updateApiKeyDisplay();
+  closeApiKeyModal();
+  showAppNotice('Your mentor chat key was removed from this browser session.');
+}
+
+function getMentorApiKey() {
+  return sessionStorage.getItem('gemini_chat_api_key') || '';
 }
 
 function updateApiKeyDisplay() {
   const btnText = document.getElementById('apiKeyBtnText');
   if (!btnText) return;
 
-  btnText.innerText = 'AI Backend Ready';
-  btnText.classList.add('text-emerald-400');
+  if (getMentorApiKey()) {
+    btnText.innerText = 'Mentor Key Set';
+    btnText.classList.add('text-emerald-400');
+  } else {
+    btnText.innerText = 'Mentor Key (Optional)';
+    btnText.classList.remove('text-emerald-400');
+  }
+}
+
+async function callGeminiWithUserKey(promptText) {
+  const apiKey = getMentorApiKey();
+  if (!apiKey) {
+    throw new Error('Add your own Gemini API key to use mentor chat.');
+  }
+
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey
+      },
+      body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+    }
+  );
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error('Your Gemini key has reached its quota. Check its limits in Google AI Studio or try again after the quota resets.');
+    }
+    if ([502, 503, 504].includes(response.status)) {
+      throw new Error('Gemini is temporarily busy. Please try the mentor chat again in a moment.');
+    }
+    throw new Error(data.error?.message || `Mentor chat failed (${response.status}). Check your Gemini API key and try again.`);
+  }
+
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) {
+    throw new Error('Gemini did not return a chat response. Please try again.');
+  }
+  return text;
 }
 
 function showAppNotice(message) {
@@ -269,6 +355,12 @@ async function askMentorFollowup() {
   const query = input.value.trim();
   if (!query) return;
 
+  if (!getMentorApiKey()) {
+    pendingMentorQuestion = true;
+    openApiKeyModal();
+    return;
+  }
+
   const chatContainer = document.getElementById('mentorChatHistory');
   const safeQuery = escapeHtml(query);
   chatContainer.innerHTML += `
@@ -289,7 +381,7 @@ Give actionable, concrete, senior-level advice in 2-3 concise paragraphs. Format
 `;
 
   try {
-    const reply = await callGemini(prompt, false);
+  const reply = await callGeminiWithUserKey(prompt);
     chatContainer.innerHTML += `
       <div class="p-2.5 rounded-lg bg-indigo-950/40 border border-indigo-900/60 text-slate-200">
         <span class="font-bold text-indigo-300 block mb-0.5 text-[10px]">MNC Hiring Mentor:</span>

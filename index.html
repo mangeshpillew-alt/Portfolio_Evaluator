@@ -48,7 +48,7 @@
       <div class="flex items-center gap-3">
         <button onclick="openApiKeyModal()" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-700 bg-slate-800/80 hover:border-indigo-500/50 hover:bg-slate-800 transition flex items-center gap-2 text-slate-300">
           <i class="fa-solid fa-key text-indigo-400"></i>
-          <span id="apiKeyBtnText">Gemini API Key</span>
+          <span id="apiKeyBtnText">Mentor Key (Optional)</span>
         </button>
         
         <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-400 hover:text-white focus:outline-none">
@@ -250,7 +250,7 @@
                 </h4>
                 <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">Live Mentor</span>
               </div>
-              <p class="text-xs text-slate-400 mb-4">Need specific rewrites for bullet points, architecture advice, or ways to justify your projects? Ask below.</p>
+              <p class="text-xs text-slate-400 mb-4">Need architecture advice or interview prep? Mentor chat is optional and uses your own Gemini key. Evaluations use the app's server key; choose “Continue without chat” if you don't want to provide a key.</p>
               
               <div id="mentorChatHistory" class="bg-slate-950/80 rounded-xl p-3 max-h-48 overflow-y-auto space-y-3 text-xs border border-slate-800 mb-3">
                 <div class="p-2.5 rounded-lg bg-indigo-950/30 border border-indigo-900/40 text-slate-300">
@@ -457,30 +457,39 @@
 
   </main>
 
-  <!-- API BACKEND MODAL -->
+  <!-- Optional visitor-owned key used only for mentor chat -->
   <div id="apiKeyModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-indigo-400"></i> Secure AI Backend Required
+          <i class="fa-solid fa-key text-indigo-400"></i> Optional AI Mentor Chat
         </h3>
         <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <p class="text-xs text-slate-400 leading-relaxed">
-        The app now sends requests through a backend proxy so your Gemini API key is never exposed in the browser. Set <code class="text-indigo-300">GEMINI_API_KEY</code> on the server and restart the app.
+        Portfolio evaluations and other AI reports use the app's server key. Mentor chat is optional and uses your own Gemini API key directly with Google; skip this to keep using the rest of the app without chat.
       </p>
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] text-slate-300">
-        <div class="font-semibold text-indigo-300 mb-1">Example:</div>
-        <code class="break-all">GEMINI_API_KEY=AIzaSy...<br>npm start</code>
+      <div>
+        <label for="apiKeyInput" class="block text-[11px] font-semibold text-slate-400 mb-1">Your Gemini API key (optional)</label>
+        <input type="password" id="apiKeyInput" autocomplete="off" placeholder="Paste your key to enable mentor chat" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none">
       </div>
-      <div class="flex items-center justify-between pt-2">
+      <p class="text-[11px] text-slate-500 leading-relaxed">
+        Stored only in this browser tab's session storage, sent directly to Google for chat, and removed when the tab session ends. Do not use a key you are not authorized to use. You can restrict or revoke your key in Google AI Studio.
+      </p>
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
         <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-xs text-indigo-400 hover:underline">
-          Get free key from Google AI Studio &rarr;
+          Get a Gemini key &rarr;
         </a>
-        <button onclick="closeApiKeyModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2 rounded-xl text-xs transition">
-          Done
-        </button>
+        <div class="flex gap-2">
+          <button onclick="skipMentorChat()" class="border border-slate-700 text-slate-300 hover:bg-slate-800 font-semibold px-3 py-2 rounded-xl text-xs transition">
+            Continue without chat
+          </button>
+          <button onclick="saveApiKey()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-3 py-2 rounded-xl text-xs transition">
+            Save & ask
+          </button>
+        </div>
       </div>
+      <button onclick="removeApiKey()" class="text-[11px] text-slate-500 hover:text-rose-300 underline">Remove my saved chat key</button>
     </div>
   </div>
 
