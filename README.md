@@ -16,14 +16,7 @@ The service runs on Render's free instance and can take 50 seconds or more to re
 - Resume bullet feedback and STAR-style rewrites.
 - AI career mentor follow-up chat.
 
-## Run locally
-
-1. Install Node.js 24 or later.
-2. Run `npm ci`.
-3. Copy `.env.example` to `.env` and set `GEMINI_API_KEY` to a key from [Google AI Studio](https://aistudio.google.com/app/apikey).
-4. Run `npm start`, then open `http://localhost:3000`.
-
-Never commit `.env` or share the server API key. Server-powered evaluations and AI reports use the app owner's Gemini key and are limited to 20 requests per IP per 15 minutes.
+Server-powered evaluations and AI reports use the app owner's Gemini key and are limited to 20 requests per IP per 15 minutes.
 
 ### Optional visitor-owned mentor chat key
 
@@ -33,16 +26,6 @@ The visitor-owned key is only for mentor chat. It does not replace the deploymen
 
 The ecosystem audit only requests public HTTPS pages, follows a maximum of three redirects, rejects URLs resolving to non-public IP addresses, and limits each retrieved page to 500 KB and 8 seconds. If a source blocks automated access or is not public, the audit reports that source as unavailable and continues with the remaining public data and the candidate's supplied details.
 
-## Deploy on Render
-
-This repository includes a Render Blueprint at `render.yaml`.
-
-1. Push this project to GitHub.
-2. In Render, choose **New** → **Blueprint** and connect the repository.
-3. When prompted, add `GEMINI_API_KEY` as a secret environment variable. Do not put the key in the repository.
-4. Deploy. Render installs dependencies, starts the Node server, and checks `/healthz`.
-
-The generated `onrender.com` URL can be shared publicly. Gemini usage is charged against the key owner's quota, so review the provider's quotas and billing settings before sharing the app widely.
 
 ## Tech stack
 
