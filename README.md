@@ -37,5 +37,3 @@ The ecosystem audit only requests public HTTPS pages, follows a maximum of three
 ## Public deployment and API usage
 
 The server Gemini key is never included in the browser bundle or repository. Public server-powered AI features use the deployment owner's Gemini quota and are rate-limited to 20 requests per IP per 15 minutes. Visitor-owned keys, when supplied for optional mentor chat, are sent directly to Google and use that visitor's quota.
-
-Temporary Gemini availability errors (502/503/504) are retried automatically, and errors are shown in the app rather than in repeated browser popups. A genuinely exhausted Gemini quota cannot be fixed by retries; wait for the quota reset or adjust the key's limits/billing in Google AI Studio.
